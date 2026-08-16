@@ -1,0 +1,472 @@
+{
+  "enabled": {
+    "description": "启用插件",
+    "type": "bool",
+    "hint": "关闭后插件仍可被 AstrBot 加载，但不会处理消息或启动本地服务。",
+    "default": true
+  },
+  "qq": {
+    "description": "QQ 端接收设置",
+    "type": "object",
+    "items": {
+      "capture_private": {
+        "description": "接收私聊消息",
+        "type": "bool",
+        "default": true
+      },
+      "capture_group": {
+        "description": "接收群聊消息",
+        "type": "bool",
+        "default": true
+      },
+      "platforms": {
+        "description": "允许的平台适配器",
+        "type": "list",
+        "hint": "留空表示不限制。常用值：AIOCQHTTP、QQOFFICIAL、QQOFFICIAL_WEBHOOK。",
+        "default": ["AIOCQHTTP", "QQOFFICIAL", "QQOFFICIAL_WEBHOOK"]
+      },
+      "capture_images": {
+        "description": "接收图片消息",
+        "type": "bool",
+        "default": true
+      },
+      "stop_event_after_forward": {
+        "description": "转发后停止事件传播",
+        "type": "bool",
+        "hint": "默认关闭，避免影响其他插件和 AstrBot 后续流程。",
+        "default": false
+      }
+    }
+  },
+  "local": {
+    "description": "本地网络端设置",
+    "type": "object",
+    "items": {
+      "http": {
+        "description": "HTTP 服务设置",
+        "type": "object",
+        "items": {
+          "enabled": {
+            "description": "启用 HTTP 服务",
+            "type": "bool",
+            "default": false
+          },
+          "host": {
+            "description": "HTTP 监听地址",
+            "type": "string",
+            "hint": "建议初期使用 127.0.0.1，确认鉴权后再暴露到局域网。",
+            "default": "127.0.0.1"
+          },
+          "port": {
+            "description": "HTTP 监听端口",
+            "type": "int",
+            "default": 8765
+          },
+          "auth_token": {
+            "description": "HTTP 鉴权 Token",
+            "type": "string",
+            "hint": "请求时使用 Authorization: Bearer <token>。留空仅建议本机调试。",
+            "default": ""
+          },
+          "max_body_bytes": {
+            "description": "请求体大小上限",
+            "type": "int",
+            "default": 1048576
+          }
+        }
+      }
+    }
+  },
+  "sessions": {
+    "description": "QQ 会话映射",
+    "type": "object",
+    "hint": "用于本地服务向 QQ 主动发送。QQ 入站转发只由 routes 决定，不要求预先绑定。",
+    "items": {
+      "auto_record": {
+        "description": "自动记录命中路由的 QQ 会话",
+        "type": "bool",
+        "hint": "启用后，插件会保存 AstrBot 发送消息所需的会话地址。",
+        "default": true
+      },
+      "migrated_from_kv": {
+        "description": "旧绑定迁移状态",
+        "type": "bool",
+        "invisible": true,
+        "default": false
+      },
+      "bindings": {
+        "description": "已记录的 QQ 会话",
+        "type": "template_list",
+        "hint": "可查看、修改或删除自动记录和 /interconnect bind 创建的会话。只填写会话 ID 时，会在该会话下次发言时自动补全 AstrBot 会话地址。",
+        "default": [],
+        "templates": {
+          "qq_session": {
+            "name": "QQ 会话",
+            "items": {
+              "alias": {
+                "description": "会话别名",
+                "type": "string",
+                "hint": "用于 HTTP target.alias；必须唯一。",
+                "default": "main_group"
+              },
+              "source_type": {
+                "description": "会话类型",
+                "type": "string",
+                "options": ["qq_group", "qq_private"],
+                "labels": ["QQ 群聊", "QQ 私聊"],
+                "default": "qq_group"
+              },
+              "conversation_id": {
+                "description": "会话 ID",
+                "type": "string",
+                "hint": "群聊填写群号/群 OpenID，私聊填写对方 QQ 号/OpenID。",
+                "default": ""
+              },
+              "platform": {
+                "description": "平台适配器",
+                "type": "string",
+                "hint": "通常由插件自动填写；留空表示不限制平台。",
+                "default": ""
+              },
+              "unified_msg_origin": {
+                "description": "AstrBot 会话地址",
+                "type": "string",
+                "hint": "由插件自动记录。主动发送依赖此值，通常不需要手动修改。",
+                "default": ""
+              },
+              "updated_at": {
+                "description": "更新时间",
+                "type": "string",
+                "hint": "由插件自动填写。",
+                "default": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routes": {
+    "description": "消息路由规则",
+    "type": "template_list",
+    "hint": "使用 QQ 到 HTTP 路由完成入站转发；HTTP 到 QQ 路由仅在请求无法直接填写 target 时使用。一个消息需要发往多个 HTTP 地址时，请添加多条路由。",
+    "default": [],
+    "templates": {
+      "qq_to_http_webhook": {
+        "name": "QQ 到 HTTP Webhook",
+        "hint": "将符合来源和内容条件的 QQ 消息转发到 HTTP 服务，不要求预先绑定。",
+        "items": {
+          "id": {
+            "description": "路由 ID",
+            "type": "string",
+            "hint": "必须唯一，建议只使用字母、数字、下划线和短横线。",
+            "default": "qq_to_http"
+          },
+          "enabled": {
+            "description": "启用路由",
+            "type": "bool",
+            "default": true
+          },
+          "source": {
+            "description": "QQ 来源匹配",
+            "type": "object",
+            "hint": "所有限制均为可选。推荐使用会话 ID；绑定别名仅用于已记录的会话映射。",
+            "items": {
+              "type": {
+                "description": "会话类型",
+                "type": "string",
+                "options": ["*", "qq_group", "qq_private"],
+                "labels": ["全部 QQ 会话", "QQ 群聊", "QQ 私聊"],
+                "default": "*"
+              },
+              "conversation_id": {
+                "description": "会话 ID",
+                "type": "string",
+                "hint": "群聊填写群号/群 OpenID，私聊填写对方 QQ 号/OpenID；留空表示不限制。",
+                "default": ""
+              },
+              "session_alias": {
+                "description": "备用会话别名",
+                "type": "string",
+                "hint": "一般留空并使用会话 ID。仅在会话 ID 不稳定时填写 WebUI 会话映射或 /interconnect bind 创建的别名。",
+                "default": ""
+              },
+              "sender_id": {
+                "description": "发送者用户 ID",
+                "type": "string",
+                "hint": "用于限制群内发送者；留空表示群内所有成员均可触发。",
+                "default": ""
+              }
+            }
+          },
+          "match": {
+            "description": "消息内容匹配",
+            "type": "object",
+            "hint": "所有非空来源限制和内容限制使用 AND 逻辑。要转发该会话中的全部消息，请将文本前缀和正则表达式留空。",
+            "items": {
+              "text_prefix": {
+                "description": "文本前缀",
+                "type": "string",
+                "hint": "仅转发以该文本开头的消息；留空表示不限制。",
+                "default": ""
+              },
+              "regex": {
+                "description": "文本正则表达式",
+                "type": "string",
+                "hint": "使用 Python 正则语法；留空表示不限制。",
+                "default": ""
+              },
+              "require_image": {
+                "description": "必须包含图片",
+                "type": "bool",
+                "default": false
+              }
+            }
+          },
+          "target": {
+            "description": "HTTP Webhook 目标",
+            "type": "object",
+            "items": {
+              "id": {
+                "description": "目标 ID",
+                "type": "string",
+                "hint": "可选的 LAS 或 Webhook 端点标识。",
+                "default": ""
+              },
+              "url": {
+                "description": "Webhook URL",
+                "type": "string",
+                "hint": "必须是完整的 HTTP 或 HTTPS URL。",
+                "default": "http://127.0.0.1:9000/webhook"
+              },
+              "timeout_seconds": {
+                "description": "请求超时秒数",
+                "type": "float",
+                "slider": {"min": 0.5, "max": 120, "step": 0.5},
+                "default": 8.0
+              },
+              "retry_attempts": {
+                "description": "额外重试次数",
+                "type": "int",
+                "hint": "只重试超时、网络错误、HTTP 429 和 HTTP 5xx。",
+                "slider": {"min": 0, "max": 5, "step": 1},
+                "default": 0
+              },
+              "retry_backoff_seconds": {
+                "description": "重试退避基数秒数",
+                "type": "float",
+                "slider": {"min": 0.1, "max": 30, "step": 0.1},
+                "default": 0.5
+              },
+              "auth_token": {
+                "description": "Webhook Bearer Token",
+                "type": "string",
+                "hint": "插件访问 LAS 时发送；不会写入标准消息包体。",
+                "default": ""
+              },
+              "headers": {
+                "description": "自定义请求头",
+                "type": "dict",
+                "hint": "键和值会转换为 HTTP Header 字符串。",
+                "items": {},
+                "default": {}
+              }
+            }
+          }
+        }
+      },
+      "local_to_qq_session": {
+        "name": "HTTP 到 QQ 会话",
+        "hint": "仅作为兜底：当调用方不能在请求中填写 target 时，将固定 HTTP 来源映射到 QQ 会话。",
+        "items": {
+          "id": {
+            "description": "路由 ID",
+            "type": "string",
+            "hint": "必须唯一。",
+            "default": "http_to_qq"
+          },
+          "enabled": {
+            "description": "启用路由",
+            "type": "bool",
+            "default": true
+          },
+          "source": {
+            "description": "本地 HTTP 来源匹配",
+            "type": "object",
+            "items": {
+              "type": {
+                "description": "来源类型",
+                "type": "string",
+                "options": ["http_endpoint", "*"],
+                "labels": ["HTTP 端点", "全部本地来源"],
+                "default": "http_endpoint"
+              },
+              "endpoint_id": {
+                "description": "HTTP 端点 ID",
+                "type": "string",
+                "hint": "LAS 请求中应放在 source.extra.endpoint_id。",
+                "default": ""
+              }
+            }
+          },
+          "match": {
+            "description": "消息内容匹配",
+            "type": "object",
+            "hint": "所有非空来源限制和内容限制使用 AND 逻辑。要接受该来源的全部消息，请将文本前缀和正则表达式留空。",
+            "items": {
+              "text_prefix": {
+                "description": "文本前缀",
+                "type": "string",
+                "default": ""
+              },
+              "regex": {
+                "description": "文本正则表达式",
+                "type": "string",
+                "default": ""
+              },
+              "require_image": {
+                "description": "必须包含图片",
+                "type": "bool",
+                "default": false
+              }
+            }
+          },
+          "target": {
+            "description": "QQ 会话目标",
+            "type": "object",
+            "items": {
+              "source_type": {
+                "description": "会话类型",
+                "type": "string",
+                "options": ["qq_group", "qq_private"],
+                "labels": ["QQ 群聊", "QQ 私聊"],
+                "default": "qq_group"
+              },
+              "id": {
+                "description": "会话 ID",
+                "type": "string",
+                "hint": "优先填写已自动记录的群号、QQ 号或 OpenID。",
+                "default": ""
+              },
+              "alias": {
+                "description": "备用会话别名",
+                "type": "string",
+                "hint": "仅在按会话 ID 无法定位时使用 WebUI 会话映射或 /interconnect bind 创建的别名。",
+                "default": ""
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "protocol": {
+    "description": "HTTP 消息协议设置",
+    "type": "object",
+    "items": {
+      "schema_version": {
+        "description": "协议版本",
+        "type": "string",
+        "hint": "发送到 webhook 的标准 JSON 中会携带此版本号。",
+        "default": "1.0"
+      },
+      "webhook_payload_mode": {
+        "description": "Webhook 请求体模式",
+        "type": "string",
+        "options": ["standard", "template"],
+        "hint": "standard 发送标准包体；template 读取下方选择的 JSON 文件。",
+        "default": "standard"
+      },
+      "webhook_payload_template_files": {
+        "description": "Webhook JSON 模板文件",
+        "type": "file",
+        "file_types": ["json"],
+        "hint": "上传或选择已有 JSON 文件。存在多个文件时使用列表中的第一个。",
+        "default": []
+      },
+      "webhook_payload_template": {
+        "description": "旧版内联模板",
+        "type": "string",
+        "invisible": true,
+        "default": ""
+      },
+      "include_raw_refs": {
+        "description": "Webhook 包含原始消息引用",
+        "type": "bool",
+        "hint": "关闭后不会向本地 webhook 发送 unified_msg_origin 等原始引用。",
+        "default": true
+      },
+      "include_extra": {
+        "description": "Webhook 包含扩展字段",
+        "type": "bool",
+        "default": true
+      }
+    }
+  },
+  "media": {
+    "description": "媒体缓存设置",
+    "type": "object",
+    "items": {
+      "cache_enabled": {
+        "description": "启用媒体缓存",
+        "type": "bool",
+        "default": true
+      },
+      "max_cache_mb": {
+        "description": "最大缓存大小 MB",
+        "type": "int",
+        "default": 256
+      },
+      "expire_seconds": {
+        "description": "缓存过期秒数",
+        "type": "int",
+        "default": 86400
+      },
+      "max_image_bytes": {
+        "description": "单张图片最大字节数",
+        "type": "int",
+        "default": 10485760
+      },
+      "max_media_bytes": {
+        "description": "单个视频或文件最大字节数",
+        "type": "int",
+        "hint": "仅用于接收 QQ 媒体时的本地持久化，且不能超过总缓存大小。",
+        "default": 67108864
+      },
+      "download_timeout_seconds": {
+        "description": "媒体下载超时秒数",
+        "type": "int",
+        "default": 15
+      },
+      "allowed_mime_types": {
+        "description": "允许的图片 MIME 类型",
+        "type": "list",
+        "default": ["image/jpeg", "image/png", "image/gif", "image/webp"]
+      }
+    }
+  },
+  "observability": {
+    "description": "日志与观测设置",
+    "type": "object",
+    "items": {
+      "log_payload": {
+        "description": "记录完整消息包",
+        "type": "bool",
+        "hint": "可能包含私聊内容和本地敏感数据，默认关闭。",
+        "default": false
+      },
+      "log_level": {
+        "description": "插件日志等级",
+        "type": "string",
+        "options": ["DEBUG", "INFO", "WARNING", "ERROR"],
+        "default": "INFO"
+      },
+      "delivery_history_limit": {
+        "description": "最近投递记录保留条数",
+        "type": "int",
+        "hint": "仅保存在内存中，用于 /interconnect deliveries 和 /interconnect errors。设置为 0 可关闭历史记录，但仍会保留聚合统计。",
+        "default": 100
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "event_type": "message",
+  "message_type": "text",
+  "message_id": "qq-message-id",
+  "direction": "qq_to_local",
+  "route_id": "qq_to_local_default",
+  "source": {
+    "type": "qq_group",
+    "id": "123456",
+    "alias": "qq_group_123456",
+    "extra": {
+      "group_id": "123456",
+      "user_id": "654321",
+      "platform": "aiocqhttp"
+    }
+  },
+  "target": {
+    "type": "http_webhook",
+    "id": "local_debug",
+    "alias": "",
+    "extra": {}
+  },
+  "sender": {
+    "id": "654321",
+    "name": "Alice",
+    "platform": "aiocqhttp",
+    "group_id": "123456",
+    "extra": {}
+  },
+  "content": {
+    "text": "hello from QQ",
+    "images": [],
+    "videos": [],
+    "files": [],
+    "attachments": [],
+    "links": [],
+    "forwards": [],
+    "mentions": [],
+    "extra": {}
+  },
+  "raw_refs": {
+    "astrbot_message_id": "qq-message-id",
+    "unified_msg_origin": "...",
+    "raw_message_id": "qq-message-id",
+    "extra": {}
+  },
+  "timestamp": "2026-05-30T12:00:00+00:00",
+  "extra": {}
+}

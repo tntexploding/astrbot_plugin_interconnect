@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "message_id": "optional-client-message-id",
+  "source": {
+    "type": "http_endpoint",
+    "id": "local-app"
+  },
+  "target": {
+    "type": "qq_session",
+    "id": "123456",
+    "conversation_type": "qq_group"
+  },
+  "sender": {
+    "id": "local-app",
+    "name": "Local App"
+  },
+  "content": {
+    "text": "hello from local",
+    "images": [
+      {
+        "media_id": "optional-image-id",
+        "kind": "image",
+        "source_type": "url",
+        "url": "https://example.com/image.png",
+        "file_path": "",
+        "mime_type": "image/png",
+        "sha256": "",
+        "extra": {}
+      }
+    ],
+    "mentions": [],
+    "extra": {}
+  },
+  "extra": {}
+}

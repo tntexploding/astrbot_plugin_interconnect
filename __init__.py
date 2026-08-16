@@ -1,0 +1,1 @@
+"""AstrBot Interconnect plugin package."""
