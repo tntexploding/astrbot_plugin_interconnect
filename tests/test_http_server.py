@@ -5,7 +5,6 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
-from typing import Any
 
 import aiohttp
 
@@ -29,9 +28,7 @@ class FakeDispatcher:
         self.delivery_ok = delivery_ok
         self.envelopes: list[MessageEnvelope] = []
 
-    async def dispatch(
-        self, envelope: MessageEnvelope
-    ) -> tuple[DispatchResult, ...]:
+    async def dispatch(self, envelope: MessageEnvelope) -> tuple[DispatchResult, ...]:
         self.envelopes.append(envelope)
         message = "sent" if self.delivery_ok else "QQ delivery failed"
         return (DispatchResult(envelope.target, self.delivery_ok, message),)

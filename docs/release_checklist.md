@@ -2,13 +2,30 @@
 
 本文定义 HTTP 首个稳定版本的封版边界。WebSocket 不在本次验收范围内。
 
+## 官方插件设置核对
+
+依据 [AstrBot 插件开发指南](https://docs.astrbot.app/dev/star/plugin-new.html)
+和 [插件发布指南](https://docs.astrbot.app/dev/star/plugin-publish.html)：
+
+- 插件目录名和 `metadata.name` 均为 `astrbot_plugin_interconnect`。
+- `main.py` 包含继承 `Star` 的插件入口类。
+- `_conf_schema.json`、`requirements.txt`、`README.md` 和 `LICENSE` 已提供。
+- `metadata.version` 使用语义化版本，Git 发布标签使用对应的 `v` 前缀。
+- `support_platforms` 使用 AstrBot 官方适配器键。
+- `astrbot_version` 覆盖配置文件选择器所需的 AstrBot 4.13 及以上版本。
+- `short_desc` 和市场检索标签已提供。
+- Logo、Skills、国际化和个人主页均为可选项，本版本不需要。
+- 发布包远低于 16 MB 限制。
+
+发布前仍必须将 `metadata.repo` 和 Git `origin` 同时改为实际插件仓库地址。
+
 ## 自动化检查
 
 发布前在插件目录执行：
 
 ```powershell
-..\..\..\.venv\Scripts\ruff.exe format --check .
-..\..\..\.venv\Scripts\ruff.exe check .
+..\..\..\.venv\Scripts\ruff.exe format --check . tests
+..\..\..\.venv\Scripts\ruff.exe check . tests
 ..\..\..\.venv\Scripts\python.exe -B -m unittest discover -s tests -v
 ```
 

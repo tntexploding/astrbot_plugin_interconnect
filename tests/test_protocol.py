@@ -140,9 +140,7 @@ class MessageProtocolCodecTest(unittest.TestCase):
     def test_template_payload_loads_selected_json_file(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
-            relative_path = (
-                "files/protocol/webhook_payload_template_files/custom.json"
-            )
+            relative_path = "files/protocol/webhook_payload_template_files/custom.json"
             template_path = root / relative_path
             template_path.parent.mkdir(parents=True)
             template_path.write_text(

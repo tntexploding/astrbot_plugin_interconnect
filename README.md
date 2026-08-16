@@ -9,6 +9,8 @@
 状态。版本变更见 [`CHANGELOG.md`](CHANGELOG.md)，发布验收范围见
 [`docs/release_checklist.md`](docs/release_checklist.md)。
 
+支持 AstrBot `>=4.13,<5`。该下限来自插件配置使用的文件选择器能力。
+
 当前版本尚未实现 WebSocket。配置界面不会保留无效的 WS 开关或路由；后续
 实现 WS 时会沿用本文相同的会话 ID、消息包体和路由规则。
 

@@ -1,10 +1,16 @@
 name: astrbot_plugin_interconnect
 display_name: AstrBot Interconnect
+short_desc: QQ 与本地 HTTP 服务的双向消息桥接。
 desc: 在 QQ Bot 与本地 HTTP 服务之间进行轻量级双向消息互联。
-version: v0.1.0
+version: 0.1.0
 author: tnt_exploding
 repo: ""
+astrbot_version: ">=4.13,<5"
 support_platforms:
   - aiocqhttp
-  - qqofficial
-  - qqofficial_webhook
+  - qq_official
+  - qq_official_webhook
+tags:
+  - qq
+  - http
+  - webhook

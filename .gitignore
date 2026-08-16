@@ -191,6 +191,9 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 
+# AstrBot runtime files must never be packaged with the plugin.
+/data/
+
 # PyPI configuration file
 .pypirc
 

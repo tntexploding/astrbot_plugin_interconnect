@@ -6,6 +6,7 @@ from typing import Any
 
 from aiohttp import web
 
+from .. import PLUGIN_VERSION
 from ..config import HttpConfig
 from ..errors import ConfigError
 from ..models import (
@@ -26,7 +27,7 @@ class LocalHttpServer:
         self,
         config: HttpConfig,
         dispatcher: MessageDispatcher,
-        plugin_version: str = "v0.1.0",
+        plugin_version: str = PLUGIN_VERSION,
     ) -> None:
         self._config = config
         self._dispatcher = dispatcher
