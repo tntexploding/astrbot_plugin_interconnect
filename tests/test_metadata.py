@@ -20,6 +20,7 @@ _SEMANTIC_VERSION_PATTERN = re.compile(
     r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
     r"(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$"
 )
+_PLUGIN_REPOSITORY = "https://github.com/tntexploding/astrbot_plugin_interconnect"
 _SUPPORTED_QQ_PLATFORMS = {
     "aiocqhttp",
     "qq_official",
@@ -42,7 +43,9 @@ class MetadataTest(unittest.TestCase):
                 self.assertIsInstance(self.metadata.get(field_name), str)
                 self.assertTrue(self.metadata[field_name].strip())
         self.assertEqual(self.metadata["name"], PLUGIN_ROOT.name)
-        self.assertIn("repo", self.metadata)
+
+    def test_declares_release_repository(self) -> None:
+        self.assertEqual(self.metadata["repo"], _PLUGIN_REPOSITORY)
 
     def test_version_is_semantic_and_matches_runtime(self) -> None:
         version = self.metadata["version"]

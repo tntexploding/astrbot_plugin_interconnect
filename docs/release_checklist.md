@@ -17,7 +17,9 @@
 - Logo、Skills、国际化和个人主页均为可选项，本版本不需要。
 - 发布包远低于 16 MB 限制。
 
-发布前仍必须将 `metadata.repo` 和 Git `origin` 同时改为实际插件仓库地址。
+插件唯一发布仓库为
+<https://github.com/tntexploding/astrbot_plugin_interconnect>；`metadata.repo` 和 Git
+`origin` 必须同时指向该地址。
 
 ## 自动化检查
 
@@ -50,7 +52,8 @@
 ## 发布前 Git 检查
 
 - 确认 `metadata.yaml` 的版本与标签一致。
-- 将 `metadata.yaml` 的 `repo` 设置为插件实际仓库地址。
-- 确认 Git 远端属于本插件，禁止推送到 AstrBot 示例插件仓库。
+- 确认 `metadata.yaml` 的 `repo` 指向唯一发布仓库。
+- 确认 Git `origin` 为 `tntexploding/astrbot_plugin_interconnect`，禁止推送到
+  AstrBot 示例插件仓库。
 - 确认运行配置、鉴权令牌、缓存和 AstrBot 持久化数据未进入提交。
 - 完整测试通过后再创建并推送 `v0.1.0` 标签。
